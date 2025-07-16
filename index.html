@@ -6,46 +6,101 @@
   <title>Customer Concepts Matching Activity</title>
   <style>
     :root {
+      --touchpoint: #ffebee;
+      --zmot: #f3e5f5;
+      --stimulus: #e8f5e9;
+      --fmot: #e3f2fd;
+      --smot: #fff3e0;
+      --migrators: #ede7f6;
+      --belowzeros: #f9fbe7;
+      --mvc: #fbe9e7;
+      --mgc: #e0f7fa;
+      --gains: #e8f5e9;
       --card-bg: #ffffff;
-      --card-shadow: rgba(0,0,0,0.1);
-      --card-gradient: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+      --card-shadow: rgba(0,0,0,0.15);
     }
     * { box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; margin: 20px; background: #fafafa; }
-    h1 { text-align: center; font-size: 1.6rem; margin-bottom: 10px; }
-    p { text-align: center; margin-bottom: 20px; }
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      margin: 0; padding: 20px;
+      background: #f0f4f8;
+      color: #333;
+    }
+    h1 {
+      text-align: center; font-size: 2rem;
+      margin-bottom: 10px; color: #1a237e;
+    }
+    p { text-align: center; margin-bottom: 20px; font-size: 1rem; }
     #container { display: flex; gap: 20px; }
-    #items { width: 25%; padding: 10px; background: #fff; border-radius: 8px;
-              box-shadow: 0 2px 8px var(--card-shadow); max-height: 80vh; overflow-y: auto; }
+    #items {
+      width: 25%; padding: 15px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px var(--card-shadow);
+      max-height: 80vh; overflow-y: auto;
+    }
     .item {
-      padding: 12px; margin: 8px 0;
-      background: var(--card-gradient); cursor: grab;
-      border: 2px solid transparent; border-radius: 8px;
+      padding: 12px; margin: 10px 0;
+      background: var(--card-bg);
+      cursor: grab;
+      border-left: 6px solid transparent;
+      border-radius: 6px;
       box-shadow: 0 2px 6px var(--card-shadow);
       transition: transform 0.2s, box-shadow 0.2s;
-      font-size: 0.9rem; font-weight: bold;
+      font-size: 0.9rem; font-weight: 600;
     }
-    .item.dragging { opacity: 0.6; transform: scale(1.05); box-shadow: 0 6px 16px var(--card-shadow); }
-    .item.correct { border-color: #4caf50; background: #e8f5e9; }
-    .item.incorrect { border-color: #f44336; background: #ffebee; }
-    #map { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; flex-grow: 1; }
+    .item:hover { transform: translateY(-2px); }
+    .item.dragging {
+      opacity: 0.7; transform: scale(1.03);
+      box-shadow: 0 4px 16px var(--card-shadow);
+    }
+    .item.correct { border-left-color: #4caf50; background: #e8f5e9; }
+    .item.incorrect { border-left-color: #f44336; background: #ffebee; }
+    #map {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px; flex-grow: 1;
+    }
     .stage {
-      padding: 10px; border-radius: 8px; min-height: 100px;
-      border: 2px dashed #bbb; background: #fff;
-      transition: background 0.2s, border-color 0.2s;
+      position: relative;
+      padding: 10px; border-radius: 12px;
+      min-height: 120px;
+      border: 2px dashed #bbb;
+      background: #fff;
+      box-shadow: 0 2px 8px var(--card-shadow);
+      transition: border-color 0.2s;
     }
-    .stage.over { border-color: #333; background: rgba(0,0,0,0.03); }
+    .stage.over { border-color: #1a237e; }
     .stage h2 {
-      margin: 0 0 6px; padding: 4px;
-      background: rgba(255,255,255,0.8); border-radius: 4px;
-      font-size: 1rem; text-align: center;
+      margin: 0 0 8px; padding: 6px 10px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 6px;
+      font-size: 1.1rem; text-align: center;
+      color: #1a237e;
     }
-    .stage p { margin: 4px 0; min-height: 40px; }
-    #result { display: none; margin-top: 20px; padding: 12px; border-radius: 8px;
-               font-size: 1.1rem; text-align: center; background: #fff;
-               box-shadow: 0 2px 8px var(--card-shadow); }
-    #result.correct { border: 2px solid #4caf50; color: #2e7d32; }
-    #result.incorrect { border: 2px solid #f44336; color: #c62828; }
+    .stage[data-stage="touchpoint"] { background: var(--touchpoint); }
+    .stage[data-stage="zmot"]      { background: var(--zmot); }
+    .stage[data-stage="stimulus"]  { background: var(--stimulus); }
+    .stage[data-stage="fmot"]      { background: var(--fmot); }
+    .stage[data-stage="smot"]     { background: var(--smot); }
+    .stage[data-stage="migrators"]{ background: var(--migrators); }
+    .stage[data-stage="belowzeros"]{ background: var(--belowzeros); }
+    .stage[data-stage="mvc"]       { background: var(--mvc); }
+    .stage[data-stage="mgc"]       { background: var(--mgc); }
+    .stage[data-stage="gains"]     { background: var(--gains); }
+    #result {
+      display: none;
+      margin: 20px auto;
+      padding: 15px;
+      max-width: 600px;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      text-align: center;
+      background: var(--card-bg);
+      box-shadow: 0 4px 12px var(--card-shadow);
+    }
+    #result.correct  { border: 2px solid #4caf50; color: #2e7d32; }
+    #result.incorrect{ border: 2px solid #f44336; color: #c62828; }
   </style>
 </head>
 <body>
@@ -65,16 +120,16 @@
       <div class="item" draggable="true" data-correct="gains">Outcomes customers must have, expect and desire</div>
     </div>
     <div id="map">
-      <div class="stage" data-stage="touchpoint"><h2>Customer Touch Point</h2><p></p></div>
-      <div class="stage" data-stage="zmot"><h2>Zero Moment of Truth</h2><p></p></div>
-      <div class="stage" data-stage="stimulus"><h2>Stimulus</h2><p></p></div>
-      <div class="stage" data-stage="fmot"><h2>First Moment of Truth</h2><p></p></div>
-      <div class="stage" data-stage="smot"><h2>Second Moment of Truth</h2><p></p></div>
-      <div class="stage" data-stage="migrators"><h2>Migrators</h2><p></p></div>
-      <div class="stage" data-stage="belowzeros"><h2>Below Zeros</h2><p></p></div>
-      <div class="stage" data-stage="mvc"><h2>Most Valuable Customers</h2><p></p></div>
-      <div class="stage" data-stage="mgc"><h2>Most Growable Customers</h2><p></p></div>
-      <div class="stage" data-stage="gains"><h2>Customer Gains</h2><p></p></div>
+      <div class="stage" data-stage="touchpoint"><h2>Customer Touch Point</h2></div>
+      <div class="stage" data-stage="zmot"><h2>Zero Moment of Truth</h2></div>
+      <div class="stage" data-stage="stimulus"><h2>Stimulus</h2></div>
+      <div class="stage" data-stage="fmot"><h2>First Moment of Truth</h2></div>
+      <div class="stage" data-stage="smot"><h2>Second Moment of Truth</h2></div>
+      <div class="stage" data-stage="migrators"><h2>Migrators</h2></div>
+      <div class="stage" data-stage="belowzeros"><h2>Below Zeros</h2></div>
+      <div class="stage" data-stage="mvc"><h2>Most Valuable Customers</h2></div>
+      <div class="stage" data-stage="mgc"><h2>Most Growable Customers</h2></div>
+      <div class="stage" data-stage="gains"><h2>Customer Gains</h2></div>
     </div>
   </div>
   <div id="result"></div>
